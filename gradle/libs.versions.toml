@@ -1,0 +1,44 @@
+[versions]
+# Android Gradle Plugin sürümü. Uygulamanın derlenme süreçlerini yönetir.
+agp = "8.10.1"
+# Kotlin sürümü. Projenin ana dilinin versiyonu.
+kotlin = "1.9.22"
+# KSP sürümü. DİKKAT: KSP sürümü her zaman Kotlin sürümüne (1.9.22) sıkı sıkıya bağlıdır.
+ksp = "1.9.22-1.0.17"
+# Çekirdek KTX kütüphaneleri. Kotlin'in Android üzerinde daha rahat yazılmasını sağlar.
+coreKtx = "1.12.0"
+lifecycleRuntimeKtx = "2.7.0"
+activityCompose = "1.8.2"
+# Jetpack Compose BOM (Bill of Materials). Compose kütüphanelerinin birbiriyle uyumlu çalışmasını garanti eder.
+composeBom = "2024.02.00"
+# Room Veritabanı sürümü.
+room = "2.6.1"
+# Konum servisleri sürümü.
+playServicesLocation = "21.2.0"
+
+[libraries]
+# Çekirdek yapı taşları
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+# Jetpack Compose UI kütüphaneleri
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+
+# Room Veritabanı kütüphaneleri
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# Google Play Services (Konum)
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+[plugins]
+# Projede kullanılacak ana eklentiler burada tanımlanır ve versiyonlanır.
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
