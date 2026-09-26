@@ -187,7 +187,7 @@ fun MainScreen(
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = { viewModel.updateSearchQuery(it) },
+                onValueChange = { viewModel.updateSearchQuery(com.onyxera.fs.util.InputValidator.limitText(it, com.onyxera.fs.util.InputValidator.MAX_SEARCH_LENGTH)) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                 placeholder = { Text("Gemi, malzeme veya açıklama ara...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara", tint = MaterialTheme.colorScheme.primary) },

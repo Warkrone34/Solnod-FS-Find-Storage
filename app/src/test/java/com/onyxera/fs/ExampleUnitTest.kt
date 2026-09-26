@@ -47,4 +47,36 @@ class ExampleUnitTest {
         assertEquals("IMO: 1234567, Çağrı İşareti: TC01", ship.details)
         assertTrue(ship.createdAt > 0L)
     }
+
+    @Test
+    fun testFilterDecimalInput() {
+        // Harfleri ve geçersiz karakterleri tamamen temizler
+        assertEquals("123", InputValidator.filterDecimalInput("123abc"))
+        assertEquals("12345", InputValidator.filterDecimalInput("12a3b4c5"))
+        assertEquals("", InputValidator.filterDecimalInput("sadece yazi"))
+
+        // Geçerli ondalıklı sayıları korur
+        assertEquals("150.75", InputValidator.filterDecimalInput("150.75"))
+        assertEquals("150,75", InputValidator.filterDecimalInput("150,75"))
+
+        // Birden fazla ondalık ayracı engeller
+        assertEquals("12.3456", InputValidator.filterDecimalInput("12.34.56"))
+
+        // Baştaki virgül/noktaya otomatik sıfır ekler (.5 -> 0.5)
+        assertEquals("0.5", InputValidator.filterDecimalInput(".5"))
+
+        // Karakter sınırını uygular
+        assertEquals("1234567890", InputValidator.filterDecimalInput("123456789099999", 10))
+    }
+
+    @Test
+    fun testLimitText() {
+        val longText = "Bu metin çok uzun bir açıklama içermektedir ve belirli bir karakterle sınırlandırılmalıdır."
+        val limited = InputValidator.limitText(longText, 20)
+        assertEquals(20, limited.length)
+        assertEquals(longText.take(20), limited)
+
+        val shortText = "Kısa metin"
+        assertEquals(shortText, InputValidator.limitText(shortText, 50))
+    }
 }

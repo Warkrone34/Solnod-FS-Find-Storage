@@ -58,18 +58,23 @@ fun CreateShipDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = {
-                        name = it
-                        if (it.isNotBlank()) isError = false
+                        name = com.onyxera.fs.util.InputValidator.limitText(it, com.onyxera.fs.util.InputValidator.MAX_SHIP_NAME_LENGTH)
+                        if (name.isNotBlank()) isError = false
                     },
                     label = { Text("Gemi / Proje Adı *") },
                     placeholder = { Text("Örn: Solnod Transporter") },
                     singleLine = true,
                     isError = isError,
                     supportingText = {
-                        if (isError) {
-                            Text("Gemi / Proje adı boş bırakılamaz.", color = MaterialTheme.colorScheme.error)
-                        } else {
-                            Text("Zorunlu alan")
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(
+                                text = if (isError) "Gemi / Proje adı boş bırakılamaz." else "Zorunlu alan",
+                                color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
+                            )
+                            Text(
+                                text = "${name.length}/${com.onyxera.fs.util.InputValidator.MAX_SHIP_NAME_LENGTH}",
+                                color = MaterialTheme.colorScheme.outline
+                            )
                         }
                     },
                     leadingIcon = {
@@ -85,11 +90,21 @@ fun CreateShipDialog(
 
                 OutlinedTextField(
                     value = details,
-                    onValueChange = { details = it },
+                    onValueChange = {
+                        details = com.onyxera.fs.util.InputValidator.limitText(it, com.onyxera.fs.util.InputValidator.MAX_SHIP_DETAILS_LENGTH)
+                    },
                     label = { Text("Ek Detaylar (Opsiyonel)") },
                     placeholder = { Text("IMO No, Çağrı İşareti, Tersane, Bayrak...") },
                     minLines = 2,
                     maxLines = 4,
+                    supportingText = {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                            Text(
+                                text = "${details.length}/${com.onyxera.fs.util.InputValidator.MAX_SHIP_DETAILS_LENGTH}",
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Description,

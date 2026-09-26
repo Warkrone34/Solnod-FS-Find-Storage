@@ -404,6 +404,7 @@ fun EditMaterialScreen(
                 value = materialName,
                 onValueChange = { viewModel.updateMaterialName(it) },
                 label = { Text("Malzeme Adı") },
+                placeholder = { Text("Klavyeyi veya mikrofonu kullanın") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -411,6 +412,14 @@ fun EditMaterialScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                 ),
+                supportingText = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Text(
+                            text = "${materialName.length}/${com.onyxera.fs.util.InputValidator.MAX_MATERIAL_NAME_LENGTH}",
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                },
                 trailingIcon = {
                     IconButton(onClick = {
                         activeSpeechField = "name"
@@ -442,6 +451,14 @@ fun EditMaterialScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                 ),
+                supportingText = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        Text(
+                            text = "${description.length}/${com.onyxera.fs.util.InputValidator.MAX_DESCRIPTION_LENGTH}",
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                },
                 trailingIcon = {
                     IconButton(onClick = {
                         activeSpeechField = "description"
@@ -462,8 +479,9 @@ fun EditMaterialScreen(
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(
                     value = priceStr,
-                    onValueChange = { viewModel.updatePrice(it) },
+                    onValueChange = { viewModel.updatePrice(com.onyxera.fs.util.InputValidator.filterDecimalInput(it)) },
                     label = { Text("Fiyat") },
+                    placeholder = { Text("0.00") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                     modifier = Modifier.weight(1f),
@@ -488,14 +506,50 @@ fun EditMaterialScreen(
                         }
                     }
                 )
-                OutlinedTextField(value = weightStr, onValueChange = { viewModel.updateWeight(it) }, label = { Text("Ağırlık (kg)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true, modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp))
+                OutlinedTextField(
+                    value = weightStr,
+                    onValueChange = { viewModel.updateWeight(com.onyxera.fs.util.InputValidator.filterDecimalInput(it)) },
+                    label = { Text("Ağırlık (kg)") },
+                    placeholder = { Text("0.0") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp)
+                )
             }
 
             Text("Ebatlar", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.outline)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = widthStr, onValueChange = { viewModel.updateWidth(it) }, label = { Text("Genişlik") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true, modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp))
-                OutlinedTextField(value = lengthStr, onValueChange = { viewModel.updateLength(it) }, label = { Text("Boy") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true, modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp))
-                OutlinedTextField(value = heightStr, onValueChange = { viewModel.updateHeight(it) }, label = { Text("Yükseklik") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true, modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp))
+                OutlinedTextField(
+                    value = widthStr,
+                    onValueChange = { viewModel.updateWidth(com.onyxera.fs.util.InputValidator.filterDecimalInput(it)) },
+                    label = { Text("Genişlik") },
+                    placeholder = { Text("0.0") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp)
+                )
+                OutlinedTextField(
+                    value = lengthStr,
+                    onValueChange = { viewModel.updateLength(com.onyxera.fs.util.InputValidator.filterDecimalInput(it)) },
+                    label = { Text("Boy") },
+                    placeholder = { Text("0.0") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp)
+                )
+                OutlinedTextField(
+                    value = heightStr,
+                    onValueChange = { viewModel.updateHeight(com.onyxera.fs.util.InputValidator.filterDecimalInput(it)) },
+                    label = { Text("Yükseklik") },
+                    placeholder = { Text("0.0") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(100.dp))

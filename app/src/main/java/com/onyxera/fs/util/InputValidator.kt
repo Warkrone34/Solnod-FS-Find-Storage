@@ -7,9 +7,18 @@ package com.onyxera.fs.util
  */
 object InputValidator {
 
+    // Alan Bazlı Maksimum Karakter Sınırları
+    const val MAX_SHIP_NAME_LENGTH = 50
+    const val MAX_SHIP_DETAILS_LENGTH = 200
+    const val MAX_MATERIAL_NAME_LENGTH = 100
+    const val MAX_DESCRIPTION_LENGTH = 500
+    const val MAX_DATE_LENGTH = 20
+    const val MAX_SEARCH_LENGTH = 80
+    const val MAX_NUMERIC_LENGTH = 10
+
     /**
      * Kullanıcıdan alınan metinsel ifadeleri temizler ve güvenli hale getirir.
-     * * @param input Kullanıcı metni.
+     * @param input Kullanıcı metni.
      * @param maxLength Veritabanı şişmesini önlemek için karakter sınırı.
      * @return Temizlenmiş ve uzunluğu sınırlandırılmış metin.
      */
@@ -27,8 +36,50 @@ object InputValidator {
     }
 
     /**
+     * Metin girişlerini belirli bir karakter limitiyle sınırlar.
+     */
+    fun limitText(input: String, maxLength: Int): String {
+        return if (input.length > maxLength) input.take(maxLength) else input
+    }
+
+    /**
+     * Sayısal alanlar (Fiyat, Kilo, Ebatlar) için kesin doğrulama ve filtreleme.
+     * Harf, sembol, boşluk veya geçersiz karakterleri tamamen engeller.
+     * Yalnızca rakamlara (0-9) ve en fazla bir adet ondalık ayraca (. veya ,) izin verir.
+     * @param input Kullanıcının yazdığı veya yapıştırdığı ham metin.
+     * @param maxLength Maksimum hane sayısı.
+     * @return Sadece geçerli pozitif ondalıklı sayı dizgisi.
+     */
+    fun filterDecimalInput(input: String, maxLength: Int = MAX_NUMERIC_LENGTH): String {
+        if (input.isBlank()) return ""
+
+        val result = StringBuilder()
+        var hasDecimalPoint = false
+
+        for (ch in input) {
+            if (ch.isDigit()) {
+                if (result.length < maxLength) {
+                    result.append(ch)
+                }
+            } else if ((ch == '.' || ch == ',') && !hasDecimalPoint) {
+                if (result.length < maxLength) {
+                    // İlk karakter olarak virgül/nokta girilirse başına "0" ekle (örn: ".5" -> "0.5")
+                    if (result.isEmpty()) {
+                        result.append("0")
+                    }
+                    result.append(ch)
+                    hasDecimalPoint = true
+                }
+            }
+            // Rakam veya ilk ondalık ayraç dışındaki tüm karakterler (harfler, semboller) filtrelenir.
+        }
+
+        return result.toString()
+    }
+
+    /**
      * Fiyat ve kilo gibi ondalıklı (Double) değerlerin kurallara uygunluğunu denetler.
-     * * @param value Kullanıcıdan gelen ham sayısal veri.
+     * @param value Kullanıcıdan gelen ham sayısal veri.
      * @return Mantıksal olarak doğruysa (pozitif ve reel bir sayı) kendisini, değilse 0.0 döner.
      */
     fun validatePositiveDouble(value: Double?): Double {
@@ -40,9 +91,6 @@ object InputValidator {
 
     /**
      * GPS koordinatlarının (Enlem ve Boylam) dünya standartlarındaki geçerliliğini doğrular.
-     * * @param lat Enlem değeri (-90 ile 90 derece).
-     * @param lng Boylam değeri (-180 ile 180 derece).
-     * @return Sensör hatası veya manipülasyon yoksa true döner.
      */
     fun isValidCoordinate(lat: Double, lng: Double): Boolean {
         return (lat in -90.0..90.0) && (lng in -180.0..180.0)

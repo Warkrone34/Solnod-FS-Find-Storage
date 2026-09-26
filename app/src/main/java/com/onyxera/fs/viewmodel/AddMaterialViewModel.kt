@@ -53,20 +53,20 @@ class AddMaterialViewModel : ViewModel() {
     private val _photoUris = MutableStateFlow<List<Uri>>(emptyList())
     val photoUris: StateFlow<List<Uri>> = _photoUris.asStateFlow()
 
-    fun updateShipName(value: String) { _shipName.value = value }
-    fun updateMaterialName(value: String) { _materialName.value = value }
-    fun updateDescription(value: String) { _description.value = value }
-    fun updateReceivedDate(value: String) { _receivedDate.value = value }
-    fun updateSentDate(value: String) { _sentDate.value = value }
-    fun updatePrice(value: String) { _priceStr.value = value }
+    fun updateShipName(value: String) { _shipName.value = com.onyxera.fs.util.InputValidator.limitText(value, com.onyxera.fs.util.InputValidator.MAX_SHIP_NAME_LENGTH) }
+    fun updateMaterialName(value: String) { _materialName.value = com.onyxera.fs.util.InputValidator.limitText(value, com.onyxera.fs.util.InputValidator.MAX_MATERIAL_NAME_LENGTH) }
+    fun updateDescription(value: String) { _description.value = com.onyxera.fs.util.InputValidator.limitText(value, com.onyxera.fs.util.InputValidator.MAX_DESCRIPTION_LENGTH) }
+    fun updateReceivedDate(value: String) { _receivedDate.value = com.onyxera.fs.util.InputValidator.limitText(value, com.onyxera.fs.util.InputValidator.MAX_DATE_LENGTH) }
+    fun updateSentDate(value: String) { _sentDate.value = com.onyxera.fs.util.InputValidator.limitText(value, com.onyxera.fs.util.InputValidator.MAX_DATE_LENGTH) }
+    fun updatePrice(value: String) { _priceStr.value = com.onyxera.fs.util.InputValidator.filterDecimalInput(value) }
 
     // YENİ: Arayüzden gelen para birimini günceller
     fun updateCurrency(value: String) { _currency.value = value }
 
-    fun updateWeight(value: String) { _weightStr.value = value }
-    fun updateWidth(value: String) { _widthStr.value = value }
-    fun updateHeight(value: String) { _heightStr.value = value }
-    fun updateLength(value: String) { _lengthStr.value = value }
+    fun updateWeight(value: String) { _weightStr.value = com.onyxera.fs.util.InputValidator.filterDecimalInput(value) }
+    fun updateWidth(value: String) { _widthStr.value = com.onyxera.fs.util.InputValidator.filterDecimalInput(value) }
+    fun updateHeight(value: String) { _heightStr.value = com.onyxera.fs.util.InputValidator.filterDecimalInput(value) }
+    fun updateLength(value: String) { _lengthStr.value = com.onyxera.fs.util.InputValidator.filterDecimalInput(value) }
 
     fun addPhotoUri(uri: Uri) {
         val currentList = _photoUris.value.toMutableList()
