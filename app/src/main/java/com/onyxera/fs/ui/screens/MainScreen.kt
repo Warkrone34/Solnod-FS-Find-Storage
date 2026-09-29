@@ -372,15 +372,22 @@ fun exportToExcel(context: Context, items: List<MaterialEntity>) {
         fileOutputStream.flush()
         fileOutputStream.close()
 
+        val sha256Checksum = com.onyxera.fs.util.SecurityUtils.sha256(exportFile)
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", exportFile)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/csv"
             putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, "Solnod F&S Operasyonel Malzeme Raporu")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Solnod F&S Operasyonel Malzeme Raporu ekte yer almaktadır.\n\n" +
+                        "🔒 Veri Bütünlüğü Doğrulaması (SHA-256):\n$sha256Checksum"
+            )
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         context.startActivity(Intent.createChooser(intent, "Excel Raporunu Aktar"))
-        Toast.makeText(context, "Sütunlu Rapor başarıyla oluşturuldu.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Sütunlu Rapor (SHA-256 Korumalı) oluşturuldu.", Toast.LENGTH_SHORT).show()
 
     } catch (e: Exception) {
         e.printStackTrace()

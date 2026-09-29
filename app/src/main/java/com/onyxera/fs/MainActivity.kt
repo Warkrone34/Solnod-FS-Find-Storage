@@ -10,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,7 @@ import com.onyxera.fs.ui.theme.AppThemeColor
 import com.onyxera.fs.ui.theme.AppThemeMode
 import com.onyxera.fs.ui.theme.FindAndStorageTheme
 import com.onyxera.fs.util.CameraHelper
+import com.onyxera.fs.util.SecurityUtils
 import com.onyxera.fs.util.SolnodConstants
 import com.onyxera.fs.util.SpeechHelper
 import com.onyxera.fs.viewmodel.AddMaterialViewModel
@@ -84,6 +86,14 @@ class MainActivity : ComponentActivity() {
                         AppThemeColor.SOLNOD_MARINE
                     }
                 )
+            }
+
+            var isSecureScreen by remember {
+                mutableStateOf(sharedPreferences.getBoolean(SolnodConstants.KEY_SECURE_SCREEN, true))
+            }
+
+            LaunchedEffect(isSecureScreen) {
+                SecurityUtils.applyScreenSecurity(this@MainActivity, isSecureScreen)
             }
 
             val isDarkTheme = when (themeMode) {
@@ -204,6 +214,11 @@ class MainActivity : ComponentActivity() {
                                 onThemeColorChange = { newColor ->
                                     themeColor = newColor
                                     sharedPreferences.edit { putString(SolnodConstants.KEY_THEME_COLOR, newColor.name) }
+                                },
+                                isSecureScreen = isSecureScreen,
+                                onSecureScreenChange = { enabled ->
+                                    isSecureScreen = enabled
+                                    sharedPreferences.edit { putBoolean(SolnodConstants.KEY_SECURE_SCREEN, enabled) }
                                 }
                             )
                         }

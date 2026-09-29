@@ -79,4 +79,22 @@ class ExampleUnitTest {
         val shortText = "Kısa metin"
         assertEquals(shortText, InputValidator.limitText(shortText, 50))
     }
+
+    @Test
+    fun testSecurityUtilsSha256() {
+        // Standart NIST SHA-256 boş metin test vektörü
+        val emptyHash = com.onyxera.fs.util.SecurityUtils.sha256("")
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", emptyHash)
+
+        // Bilinen "hello" kelimesi SHA-256 test vektörü
+        val helloHash = com.onyxera.fs.util.SecurityUtils.sha256("hello")
+        assertEquals("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", helloHash)
+
+        // Geçici dosya SHA-256 bütünlük doğrulaması
+        val tempFile = java.io.File.createTempFile("solnod_test", ".txt")
+        tempFile.writeText("hello", Charsets.UTF_8)
+        val fileHash = com.onyxera.fs.util.SecurityUtils.sha256(tempFile)
+        assertEquals("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", fileHash)
+        tempFile.delete()
+    }
 }

@@ -80,8 +80,14 @@ sağlayan kapsamlı ve güvenli bir operasyon platformudur.
 - Ayrı Çöp Kutusu ekranından silinmiş malzemeleri inceleme, tek dokunuşla geri yükleme veya kalıcı olarak yok etme.
 - **15 Günlük Otomatik Temizlik**: 15 günü geçmiş silinmiş kayıtlar veritabanını şişirmemek adına arka planda otomatik olarak kalıcı temizlenir.
 
-### 🔒 10. Tam İzolasyon & Güvenlik
-- Sıfır izinsiz bulut aktarımı. Veriler yerel SQLite/Room veritabanında (`solnod_fs_database`) izole alanda saklanır.
+### 🔒 10. Tam İzolasyon, SHA-256 ve Tersine Mühendislik Koruması
+- **Kriptografik SHA-256 Bütünlük Koruması**: APK imza sertifikasının SHA-256 parmak izi çalışma zamanında doğrulanır; yeniden paketlenmiş veya kurcalanmış (tampered) APK'lar anında tespit edilir.
+- **Tersine Mühendislik Koruması (R8 / ProGuard)**: Paket ve sınıf hiyerarşisi düzleştirilip karıştırılır (`-repackageclasses`), üretim derlemelerinde tüm log çağrıları (`android.util.Log`) otomatik ayıklanır.
+- **Root ve Müdahale Tespiti**: Superuser (su) ikilileri, test anahtarları (test-keys) ve dinamik hata ayıklayıcı (Debugger) tespiti.
+- **Bellek Kancalama Tespiti (Frida & Xposed)**: Dinamik bellek enjeksiyonu ve hook kütüphaneleri çalışma zamanında taranır.
+- **Ekran Gizliliği (FLAG_SECURE)**: Hassas denizcilik malzemeleri ve fiyatlarının ekran görüntüsünün alınması, kaydedilmesi ve son uygulamalar önizlemesinden sızması engellenir.
+- **Zorunlu TLS/HTTPS Ağ Güvenliği**: Açık metin (cleartext HTTP) trafiği sistem seviyesinde engellenmiştir.
+- **Excel Raporlarında SHA-256 Sağlama Toplamı (Checksum)**: Dışa aktarılan her Excel tablosu için kriptografik SHA-256 özeti üretilir ve paylaşım metnine eklenir.
 
 ---
 
@@ -107,6 +113,7 @@ com.onyxera.fs
 │   ├── components/     # Modüler Arayüz Bileşenleri ve Diyaloglar
 │   │   ├── AddChoiceBottomSheet.kt
 │   │   ├── CreateShipDialog.kt
+│   │   ├── SecurityAuditDialog.kt
 │   │   └── ShipManagerDialog.kt
 │   ├── screens/        # Jetpack Compose Ekranları
 │   │   ├── MainScreen.kt
@@ -119,10 +126,14 @@ com.onyxera.fs
 │       ├── Color.kt
 │       ├── Theme.kt
 │       └── Type.kt
-└── util/               # Yardımcı Modüller
+└── util/               # Güvenlik ve Yardımcı Modüller
+    ├── SecurityUtils.kt
     ├── CameraHelper.kt
     ├── SpeechHelper.kt
     ├── ShareHelper.kt
+    ├── InputValidator.kt
+    └── SolnodConstants.kt
+```
     ├── InputValidator.kt
     └── SolnodConstants.kt
 ```

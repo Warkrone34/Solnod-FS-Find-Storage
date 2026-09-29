@@ -34,8 +34,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.DirectionsBoat
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.ScreenLockPortrait
 import com.onyxera.fs.ui.components.CreateShipDialog
 import com.onyxera.fs.ui.components.ShipManagerDialog
+import com.onyxera.fs.ui.components.SecurityAuditDialog
 import com.onyxera.fs.ui.theme.AppThemeColor
 import com.onyxera.fs.ui.theme.AppThemeMode
 import com.onyxera.fs.util.SolnodConstants
@@ -55,7 +58,9 @@ fun SettingsScreen(
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
     themeColor: AppThemeColor,
-    onThemeColorChange: (AppThemeColor) -> Unit
+    onThemeColorChange: (AppThemeColor) -> Unit,
+    isSecureScreen: Boolean = true,
+    onSecureScreenChange: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -75,6 +80,11 @@ fun SettingsScreen(
     var showExportSheet by remember { mutableStateOf(false) }
     var showShipManagerDialog by remember { mutableStateOf(false) }
     var showCreateShipDialog by remember { mutableStateOf(false) }
+    var showSecurityAuditDialog by remember { mutableStateOf(false) }
+
+    if (showSecurityAuditDialog) {
+        SecurityAuditDialog(onDismiss = { showSecurityAuditDialog = false })
+    }
 
     if (showShipManagerDialog) {
         ShipManagerDialog(
@@ -376,6 +386,45 @@ fun SettingsScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant, thickness = 1.dp, modifier = Modifier.padding(vertical = 4.dp))
 
             SectionTitle(title = "Sistem ve Güvenlik")
+            SettingItemClickable(
+                icon = Icons.Default.Security,
+                title = "Güvenlik & Bütünlük Denetimi (SHA-256)",
+                description = "APK imza SHA-256 parmak izi, root ve tersine mühendislik denetimi.",
+                onClick = { showSecurityAuditDialog = true }
+            )
+
+            // EKRAN GİZLİLİĞİ KORUMASI (FLAG_SECURE)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ScreenLockPortrait,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Ekran Gizliliği Koruması (FLAG_SECURE)",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Ekran görüntüsü almayı, kayıt yapmayı ve son uygulamalarda veri sızmasını engeller.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+                Switch(
+                    checked = isSecureScreen,
+                    onCheckedChange = onSecureScreenChange
+                )
+            }
+
             SettingItemClickable(icon = Icons.Default.Lock, title = "Gizlilik Sözleşmesi", description = "Uygulama veri işleme standartlarını görüntüle.", onClick = { showPrivacyDialog = true })
             SettingItemClickable(icon = Icons.Default.Info, title = "Cihaz İzinleri", description = "Donanım (Kamera, Mikrofon) erişim yetkilerini (Fallback) yönet.", onClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

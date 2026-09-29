@@ -1,21 +1,55 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ============================================================================
+# Solnod F&S (Find & Storage) - Tersine Mühendislik ve Kod Karıştırma Kuralları
+# ============================================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# --- 1. KOD KARIŞTIRMA VE GİZLEME (OBFUSCATION & REPACKAGING) ---
+# Sınıf ve paket hiyerarşisini düzleştirip karıştırır
+-repackageclasses ''
+-allowaccessmodification
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Hata ayıklama meta verilerini ve kaynak dosya isimlerini gizle
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable,InnerClasses,EnclosingMethod
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# --- 2. HATA AYIKLAMA LOGLARINI DERLEMEDE SİLME (LOG STRIPPING) ---
+# Üretim paketinde hassas operasyonel verilerin logcat üzerinden sızmasını önler
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+}
+
+# --- 3. GÜVENLİK VE YARDIMCI MODÜLLER ---
+-keepclassmembers class com.onyxera.fs.util.SecurityUtils {
+    public static *;
+}
+-keepclassmembers class com.onyxera.fs.util.InputValidator {
+    public static *;
+}
+-keepclassmembers class com.onyxera.fs.util.SolnodConstants {
+    public static *;
+}
+
+# --- 4. ROOM VERİTABANI KORUMA KURALLARI ---
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.paging.**
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao class * { *; }
+-keep @androidx.room.TypeConverter class * { *; }
+-keep class com.onyxera.fs.data.** { *; }
+
+# --- 5. JETPACK COMPOSE & MATERIAL 3 ---
+-keep class androidx.compose.material.icons.** { *; }
+-dontwarn androidx.compose.**
+
+# --- 6. COIL GÖRSEL YÜKLEYİCİ ---
+-keep class coil.** { *; }
+-dontwarn coil.**
+
+# --- 7. KOTLIN COROUTINES ---
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.coroutines.**
